@@ -42,6 +42,16 @@ describe("agent loop", () => {
   });
 });
 
+describe("model failures", () => {
+  it("replies with a handoff and alerts the team when Claude is unreachable", async () => {
+    const app = testApp();
+    app.llm.messages.create = async () => { throw new Error("401 invalid x-api-key"); };
+    const reply = await app.agent.handleInbound(text(MARCUS, "Any jobs in NC?"));
+    expect(reply).toMatch(/Workforce Specialist will follow up/);
+    expect(app.mock.log.escalations.some((e) => e.reason === "agent_fallback")).toBe(true);
+  });
+});
+
 describe("deterministic guardrails", () => {
   it("STOP opts out without calling the model and suppresses proactive messages", async () => {
     const app = testApp();

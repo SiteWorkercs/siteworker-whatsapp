@@ -246,7 +246,26 @@ export class Agent {
 
       // 6. Claude
       state.history.push({ role: "user", content: text });
-      const replyText = await this.runModel(phone, contact, lang, notes, state.history, actor);
+      let replyText: string;
+      try {
+        replyText = await this.runModel(phone, contact, lang, notes, state.history, actor);
+      } catch (err) {
+        // Never leave someone without an answer if Claude is unreachable.
+        state.history.pop();
+        await this.d.recorder.emit({
+          topic: "agent.guardrail",
+          key: phone,
+          actor: "system",
+          payload: { event: "model_error", error: (err as Error).message.slice(0, 300) },
+        });
+        await this.d.services.requests.createEscalation({
+          phone,
+          reason: "agent_fallback",
+          priority: "normal",
+          summary: `The agent couldn't answer (system error). Their message: "${text.slice(0, 200)}"`,
+        });
+        return await this.reply(phone, FALLBACK_REPLY[lang], actor, lang);
+      }
       state.history.push({ role: "assistant", content: replyText });
       return await this.reply(phone, replyText, actor, lang);
     } finally {
