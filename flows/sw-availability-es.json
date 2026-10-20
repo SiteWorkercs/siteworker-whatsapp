@@ -1,0 +1,112 @@
+{
+  "version": "7.2",
+  "screens": [
+    {
+      "id": "AVAILABILITY",
+      "title": "Disponibilidad",
+      "terminal": true,
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextSubheading",
+            "text": "La próxima semana"
+          },
+          {
+            "type": "CheckboxGroup",
+            "name": "days",
+            "label": "Días que puedes trabajar",
+            "required": true,
+            "data-source": [
+              {
+                "id": "mon",
+                "title": "Lunes"
+              },
+              {
+                "id": "tue",
+                "title": "Martes"
+              },
+              {
+                "id": "wed",
+                "title": "Miércoles"
+              },
+              {
+                "id": "thu",
+                "title": "Jueves"
+              },
+              {
+                "id": "fri",
+                "title": "Viernes"
+              },
+              {
+                "id": "sat",
+                "title": "Sábado"
+              },
+              {
+                "id": "sun",
+                "title": "Domingo"
+              }
+            ]
+          },
+          {
+            "type": "RadioButtonsGroup",
+            "name": "shift",
+            "label": "Turno",
+            "required": true,
+            "data-source": [
+              {
+                "id": "day",
+                "title": "Turno de día"
+              },
+              {
+                "id": "night",
+                "title": "Turno de noche"
+              },
+              {
+                "id": "either",
+                "title": "Cualquiera"
+              }
+            ]
+          },
+          {
+            "type": "RadioButtonsGroup",
+            "name": "travel",
+            "label": "¿Puedes viajar por trabajo?",
+            "required": true,
+            "data-source": [
+              {
+                "id": "yes",
+                "title": "Sí, puedo viajar"
+              },
+              {
+                "id": "local",
+                "title": "Solo local"
+              }
+            ]
+          },
+          {
+            "type": "TextArea",
+            "name": "notes",
+            "label": "¿Algo más que debamos saber?",
+            "required": false,
+            "helper-text": "Opcional. No incluyas números de identificación ni datos médicos.",
+            "max-length": 300
+          },
+          {
+            "type": "Footer",
+            "label": "Enviar disponibilidad",
+            "on-click-action": {
+              "name": "complete",
+              "payload": {
+                "days": "${form.days}",
+                "shift": "${form.shift}",
+                "travel": "${form.travel}",
+                "notes": "${form.notes}"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

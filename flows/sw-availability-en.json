@@ -1,0 +1,112 @@
+{
+  "version": "7.2",
+  "screens": [
+    {
+      "id": "AVAILABILITY",
+      "title": "Availability",
+      "terminal": true,
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextSubheading",
+            "text": "Next week"
+          },
+          {
+            "type": "CheckboxGroup",
+            "name": "days",
+            "label": "Days you can work",
+            "required": true,
+            "data-source": [
+              {
+                "id": "mon",
+                "title": "Monday"
+              },
+              {
+                "id": "tue",
+                "title": "Tuesday"
+              },
+              {
+                "id": "wed",
+                "title": "Wednesday"
+              },
+              {
+                "id": "thu",
+                "title": "Thursday"
+              },
+              {
+                "id": "fri",
+                "title": "Friday"
+              },
+              {
+                "id": "sat",
+                "title": "Saturday"
+              },
+              {
+                "id": "sun",
+                "title": "Sunday"
+              }
+            ]
+          },
+          {
+            "type": "RadioButtonsGroup",
+            "name": "shift",
+            "label": "Shift",
+            "required": true,
+            "data-source": [
+              {
+                "id": "day",
+                "title": "Day shift"
+              },
+              {
+                "id": "night",
+                "title": "Night shift"
+              },
+              {
+                "id": "either",
+                "title": "Either"
+              }
+            ]
+          },
+          {
+            "type": "RadioButtonsGroup",
+            "name": "travel",
+            "label": "Can you travel for work?",
+            "required": true,
+            "data-source": [
+              {
+                "id": "yes",
+                "title": "Yes, I can travel"
+              },
+              {
+                "id": "local",
+                "title": "Local only"
+              }
+            ]
+          },
+          {
+            "type": "TextArea",
+            "name": "notes",
+            "label": "Anything else we should know?",
+            "required": false,
+            "helper-text": "Optional. Don't include ID numbers or medical details.",
+            "max-length": 300
+          },
+          {
+            "type": "Footer",
+            "label": "Send availability",
+            "on-click-action": {
+              "name": "complete",
+              "payload": {
+                "days": "${form.days}",
+                "shift": "${form.shift}",
+                "travel": "${form.travel}",
+                "notes": "${form.notes}"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,184 @@
+{
+  "version": "7.2",
+  "screens": [
+    {
+      "id": "CREW_REQUEST",
+      "title": "Request a crew",
+      "terminal": true,
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "TextBody",
+            "text": "A person reviews every request and follows up with you."
+          },
+          {
+            "type": "TextInput",
+            "name": "company",
+            "label": "Company",
+            "input-type": "text",
+            "required": true
+          },
+          {
+            "type": "TextInput",
+            "name": "site",
+            "label": "Project or site name",
+            "input-type": "text",
+            "required": true
+          },
+          {
+            "type": "Dropdown",
+            "name": "state",
+            "label": "State",
+            "required": true,
+            "data-source": [
+              {
+                "id": "VA",
+                "title": "Virginia"
+              },
+              {
+                "id": "NC",
+                "title": "North Carolina"
+              },
+              {
+                "id": "SC",
+                "title": "South Carolina"
+              },
+              {
+                "id": "PA",
+                "title": "Pennsylvania"
+              },
+              {
+                "id": "other",
+                "title": "Other"
+              }
+            ]
+          },
+          {
+            "type": "Dropdown",
+            "name": "sector",
+            "label": "Sector",
+            "required": true,
+            "data-source": [
+              {
+                "id": "solar",
+                "title": "Solar"
+              },
+              {
+                "id": "data_center",
+                "title": "Data center"
+              },
+              {
+                "id": "bess",
+                "title": "Battery storage (BESS)"
+              },
+              {
+                "id": "wind",
+                "title": "Wind"
+              },
+              {
+                "id": "electrical",
+                "title": "Electrical"
+              },
+              {
+                "id": "civil",
+                "title": "Civil construction"
+              }
+            ]
+          },
+          {
+            "type": "TextInput",
+            "name": "trade",
+            "label": "Trade(s) needed",
+            "input-type": "text",
+            "required": true,
+            "helper-text": "e.g. journeyman electricians, PV installers"
+          },
+          {
+            "type": "TextInput",
+            "name": "headcount",
+            "label": "Headcount",
+            "input-type": "number",
+            "required": true
+          },
+          {
+            "type": "DatePicker",
+            "name": "start_date",
+            "label": "Start date",
+            "required": true
+          },
+          {
+            "type": "Dropdown",
+            "name": "duration",
+            "label": "Expected duration",
+            "required": true,
+            "data-source": [
+              {
+                "id": "lt_1m",
+                "title": "Under 1 month"
+              },
+              {
+                "id": "1_3m",
+                "title": "1 to 3 months"
+              },
+              {
+                "id": "3_6m",
+                "title": "3 to 6 months"
+              },
+              {
+                "id": "gt_6m",
+                "title": "Over 6 months"
+              }
+            ]
+          },
+          {
+            "type": "RadioButtonsGroup",
+            "name": "prevailing_wage",
+            "label": "Prevailing wage / Davis-Bacon project?",
+            "required": true,
+            "data-source": [
+              {
+                "id": "yes",
+                "title": "Yes"
+              },
+              {
+                "id": "no",
+                "title": "No"
+              },
+              {
+                "id": "not_sure",
+                "title": "Not sure"
+              }
+            ]
+          },
+          {
+            "type": "TextArea",
+            "name": "notes",
+            "label": "Notes",
+            "required": false,
+            "max-length": 500
+          },
+          {
+            "type": "Footer",
+            "label": "Send request",
+            "on-click-action": {
+              "name": "complete",
+              "payload": {
+                "company": "${form.company}",
+                "site": "${form.site}",
+                "state": "${form.state}",
+                "sector": "${form.sector}",
+                "trade": "${form.trade}",
+                "headcount": "${form.headcount}",
+                "start_date": "${form.start_date}",
+                "duration": "${form.duration}",
+                "prevailing_wage": "${form.prevailing_wage}",
+                "notes": "${form.notes}"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

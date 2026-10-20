@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: siteworker-whatsapp
+    runtime: node
+    plan: starter
+    region: virginia
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DRY_RUN
+        value: "true"
+      - key: TIMEZONE
+        value: America/New_York
+      - key: AUDIT_LOG_PATH
+        value: ./data/audit.jsonl
+      - key: CLAUDE_MODEL
+        value: claude-sonnet-5-5
+      - key: KAPSO_BASE_URL
+        value: https://app.kapso.ai/api/meta/
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: KAPSO_API_KEY
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: META_APP_SECRET
+        sync: false
+      - key: WEBHOOK_VERIFY_TOKEN
+        sync: false
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_FROM_NUMBER
+        sync: false
+      - key: SENDGRID_API_KEY
+        sync: false
+      - key: ESCALATION_EMAIL_FROM
+        value: support@siteworker.com
+      - key: ESCALATION_SMS_TO
+        value: "+19176125552"
+      - key: ESCALATION_EMAIL_TO
+        value: aj.fusco@siteworker.com,support@siteworker.com
