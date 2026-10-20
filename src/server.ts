@@ -17,7 +17,18 @@ server.get("/health", (_req, res) => {
     missingSettings: app.missing,
     alerts: config.alerts.dryRun || !config.alerts.twilioAccountSid ? "printed only" : "live",
     model: config.model,
+    version: (process.env.RENDER_GIT_COMMIT ?? "local").slice(0, 7),
   });
+});
+
+// Internal: last webhook deliveries (shape only, no message text). Needs the verify token.
+const recentWebhooks: Array<Record<string, unknown>> = [];
+server.get("/internal/recent", (req, res) => {
+  if (!config.webhookVerifyToken || req.query.token !== config.webhookVerifyToken) {
+    res.sendStatus(403);
+    return;
+  }
+  res.json({ recentWebhooks, audit: app.audit.entries().slice(-15).map((e) => ({ seq: e.seq, ts: e.ts, type: e.type, ok: (e.data as any).ok, event: (e.data as any).event, error: (e.data as any).error })) });
 });
 
 // Meta / Kapso webhook verification handshake
@@ -59,14 +70,27 @@ server.post("/webhook", express.raw({ type: "*/*", limit: "2mb" }), (req, res) =
     res.sendStatus(400);
     return;
   }
-  if (isKapsoEvent(parsed, req.headers)) {
+  const kapso = isKapsoEvent(parsed, req.headers);
+  const found = kapso ? parseKapsoEvents(parsed, req.headers["x-webhook-event"] as string | undefined) : [];
+  recentWebhooks.push({
+    at: new Date().toISOString(),
+    event: req.headers["x-webhook-event"],
+    kapso,
+    batch: parsed?.batch === true,
+    topKeys: Object.keys(parsed ?? {}),
+    messageKeys: Object.keys(parsed?.message ?? parsed?.data?.[0]?.message ?? {}),
+    direction: parsed?.message?.kapso?.direction ?? parsed?.data?.[0]?.message?.kapso?.direction,
+    parsedMessages: found.length,
+  });
+  if (recentWebhooks.length > 10) recentWebhooks.shift();
+  if (kapso) {
     const secret = process.env.KAPSO_WEBHOOK_SECRET;
     if (secret && !verifyKapsoSignature(secret, raw, req.headers["x-webhook-signature"] as string | undefined)) {
       res.sendStatus(401);
       return;
     }
     res.sendStatus(200);
-    void handleMessages(parseKapsoEvents(parsed, req.headers["x-webhook-event"] as string | undefined));
+    void handleMessages(found);
     return;
   }
 
