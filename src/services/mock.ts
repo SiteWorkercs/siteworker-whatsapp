@@ -40,7 +40,7 @@ export function buildMockData(jobBoardUrl: string, today = new Date()) {
       prevailingWage: false,
       certificationsRequired: ["OSHA 10", "Virginia journeyman electrician license"],
       status: "open",
-      url: `${jobBoardUrl}/jobs/J-1001`,
+      url: jobBoardUrl, // mock job: real listing URLs come from the job board API
     },
     {
       id: "J-1002",
@@ -57,7 +57,7 @@ export function buildMockData(jobBoardUrl: string, today = new Date()) {
       prevailingWage: false,
       certificationsRequired: ["OSHA 10"],
       status: "open",
-      url: `${jobBoardUrl}/jobs/J-1002`,
+      url: jobBoardUrl, // mock job: real listing URLs come from the job board API
     },
     {
       id: "J-1003",
@@ -74,7 +74,7 @@ export function buildMockData(jobBoardUrl: string, today = new Date()) {
       prevailingWage: true,
       certificationsRequired: ["OSHA 10"],
       status: "open",
-      url: `${jobBoardUrl}/jobs/J-1003`,
+      url: jobBoardUrl, // mock job: real listing URLs come from the job board API
     },
     {
       id: "J-1004",
@@ -89,7 +89,7 @@ export function buildMockData(jobBoardUrl: string, today = new Date()) {
       prevailingWage: false,
       certificationsRequired: ["OSHA 10"],
       status: "open",
-      url: `${jobBoardUrl}/jobs/J-1004`,
+      url: jobBoardUrl, // mock job: real listing URLs come from the job board API
     },
     {
       id: "J-1005",
@@ -105,7 +105,7 @@ export function buildMockData(jobBoardUrl: string, today = new Date()) {
       prevailingWage: false,
       certificationsRequired: ["OSHA 10", "NCCCO or equivalent for crane work"],
       status: "filled",
-      url: `${jobBoardUrl}/jobs/J-1005`,
+      url: jobBoardUrl, // mock job: real listing URLs come from the job board API
     },
   ];
 
