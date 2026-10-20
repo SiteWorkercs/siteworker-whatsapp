@@ -4,6 +4,7 @@ import { normalizeWebhook, verifySignature } from "@kapso/whatsapp-cloud-api/ser
 import { createApp } from "./app.js";
 import type { InboundMessage } from "./agent/agent.js";
 import { verifyChain } from "./audit/log.js";
+import { isKapsoEvent, parseKapsoEvents, verifyKapsoSignature } from "./whatsapp/kapsoEvents.js";
 
 const app = createApp();
 const { config } = app;
@@ -31,8 +32,43 @@ server.get("/webhook", (req, res) => {
   res.sendStatus(403);
 });
 
+async function handleMessages(messages: InboundMessage[]) {
+  for (const message of messages) {
+    try {
+      await app.agent.handleInbound(message);
+    } catch (err) {
+      console.error("Failed to handle message", message.id, err);
+      await app.recorder.emit({
+        topic: "agent.guardrail",
+        key: String(message.from ?? ""),
+        actor: "system",
+        payload: { event: "handler_error", messageId: message.id, error: (err as Error).message },
+      });
+    }
+  }
+}
+
 server.post("/webhook", express.raw({ type: "*/*", limit: "2mb" }), (req, res) => {
   const raw = req.body as Buffer;
+
+  // Kapso event webhooks (the only format the sandbox number sends)
+  let parsed: any;
+  try {
+    parsed = JSON.parse(raw.toString("utf8"));
+  } catch {
+    res.sendStatus(400);
+    return;
+  }
+  if (isKapsoEvent(parsed, req.headers)) {
+    const secret = process.env.KAPSO_WEBHOOK_SECRET;
+    if (secret && !verifyKapsoSignature(secret, raw, req.headers["x-webhook-signature"] as string | undefined)) {
+      res.sendStatus(401);
+      return;
+    }
+    res.sendStatus(200);
+    void handleMessages(parseKapsoEvents(parsed, req.headers["x-webhook-event"] as string | undefined));
+    return;
+  }
 
   if (config.metaAppSecret) {
     const ok = verifySignature({
