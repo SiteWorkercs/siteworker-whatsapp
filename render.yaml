@@ -10,8 +10,9 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "22"
+      # Live replies on WhatsApp. Alerts stay printed-only until Twilio/SendGrid keys are added.
       - key: DRY_RUN
-        value: "true"
+        value: "false"
       - key: TIMEZONE
         value: America/New_York
       - key: AUDIT_LOG_PATH
@@ -25,7 +26,7 @@ services:
       - key: KAPSO_API_KEY
         sync: false
       - key: WHATSAPP_PHONE_NUMBER_ID
-        sync: false
+        value: "597907523413541"
       - key: META_APP_SECRET
         sync: false
       - key: WEBHOOK_VERIFY_TOKEN
