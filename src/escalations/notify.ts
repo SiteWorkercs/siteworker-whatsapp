@@ -41,6 +41,7 @@ const REASON_LABEL: Record<string, string> = {
   legal: "Legal question",
   harassment: "Harassment report",
   client_pricing: "Client pricing request",
+  client_services: "Client services inquiry (perm/direct hire, compliance, robotics)",
   safety: "Safety question",
   asked_for_person: "Asked for a person",
   agent_fallback: "Agent couldn't answer",

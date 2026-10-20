@@ -8,6 +8,8 @@
  *   Requests       -> SiteWorker platform (crew requests, escalations, referrals)
  */
 
+import type { SectorId, WorkerTrack } from "../business/model.js";
+
 export type Lang = "en" | "es";
 export type State = "VA" | "NC" | "SC" | "PA" | string;
 
@@ -21,7 +23,7 @@ export interface Job {
   id: string;
   title: string;
   trade: string;
-  sector: "solar" | "data_center" | "bess" | "wind" | "electrical" | "civil";
+  sector: SectorId;
   city: string;
   state: State;
   startDate: string; // YYYY-MM-DD
@@ -47,7 +49,7 @@ export interface WorkerProfile {
   language: Lang;
   trade?: string;
   state?: State;
-  track?: "journeyman" | "apprentice";
+  track?: WorkerTrack;
   certifications: Certification[];
   workforceSpecialist: string;
 }

@@ -1,4 +1,5 @@
 import type Anthropic from "@anthropic-ai/sdk";
+import { SECTOR_IDS, SERVICE_STATES } from "../business/model.js";
 
 export const ESCALATION_REASONS = [
   "pay_rate",
@@ -9,6 +10,7 @@ export const ESCALATION_REASONS = [
   "legal",
   "harassment",
   "client_pricing",
+  "client_services",
   "safety",
   "asked_for_person",
   "other",
@@ -22,9 +24,9 @@ export const tools: Anthropic.Tool[] = [
     input_schema: {
       type: "object",
       properties: {
-        state: { type: "string", description: "Two-letter state code, e.g. VA, NC, SC" },
+        state: { type: "string", description: `Two-letter state code. SiteWorker serves ${SERVICE_STATES.map((st) => st.code).join(", ")}.` },
         trade: { type: "string", description: "e.g. electrician, solar installer, laborer, equipment operator" },
-        sector: { type: "string", enum: ["solar", "data_center", "bess", "wind", "electrical", "civil"] },
+        sector: { type: "string", enum: [...SECTOR_IDS] },
         start_after: { type: "string", description: "YYYY-MM-DD; only jobs starting on/after this date" },
       },
     },
@@ -150,7 +152,7 @@ export const tools: Anthropic.Tool[] = [
   {
     name: "escalate_to_human",
     description:
-      "Hand off to a Workforce Specialist. Use for pay rates, paychecks, paperwork, injuries, complaints, legal, harassment, client pricing, safety, or when someone asks for a person.",
+      "Hand off to a Workforce Specialist. Use for pay rates, paychecks, paperwork, injuries, complaints, legal, harassment, client pricing, client services (permanent or direct hire, compliance support, robotics), safety, or when someone asks for a person.",
     input_schema: {
       type: "object",
       properties: {

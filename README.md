@@ -11,7 +11,7 @@ Everything runs on **mock data** right now. The integrations (job board, BambooH
 ```bash
 npm install
 cp .env.example .env          # add ANTHROPIC_API_KEY
-npm test                      # 37 offline tests, no API key needed
+npm test                      # offline tests, no API key needed
 npm run chat                  # text the agent from your terminal
 npm run scenarios             # run the 15 test conversations against Claude
 ```
@@ -57,6 +57,7 @@ WhatsApp ──> Kapso ──> POST /webhook ──> signature check ──> Age
 
 | Path | What it is |
 |---|---|
+| `src/business/model.ts` | How SiteWorker works, as data: positioning, states, sectors, worker tracks, client value, D.O.W.E. Read `docs/HOW_SITEWORKER_WORKS.md` for the plain-English version |
 | `src/agent/systemPrompt.ts` | The agent's rules: positioning, pay, payroll, D.O.W.E., guardrails, voice |
 | `src/agent/guardrails.ts` | Checks that don't depend on the model |
 | `src/agent/agent.ts` | Message handling and the Claude tool loop |

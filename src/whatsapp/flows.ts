@@ -1,3 +1,4 @@
+import { SECTORS, SERVICE_STATES } from "../business/model.js";
 /**
  * WhatsApp Flows (forms inside the chat), in Meta's Flow JSON format.
  * Deploy with `npm run deploy:flows`, or paste the JSON files in /flows
@@ -127,27 +128,14 @@ export function crewRequestFlow() {
               name: "state",
               label: "State",
               required: true,
-              "data-source": opts([
-                ["VA", "Virginia"],
-                ["NC", "North Carolina"],
-                ["SC", "South Carolina"],
-                ["PA", "Pennsylvania"],
-                ["other", "Other"],
-              ]),
+              "data-source": opts([...SERVICE_STATES.map((st) => [st.code, st.name] as [string, string]), ["other", "Other"]]),
             },
             {
               type: "Dropdown",
               name: "sector",
               label: "Sector",
               required: true,
-              "data-source": opts([
-                ["solar", "Solar"],
-                ["data_center", "Data center"],
-                ["bess", "Battery storage (BESS)"],
-                ["wind", "Wind"],
-                ["electrical", "Electrical"],
-                ["civil", "Civil construction"],
-              ]),
+              "data-source": opts(SECTORS.map((sec) => [sec.id, sec.label] as [string, string])),
             },
             { type: "TextInput", name: "trade", label: "Trade(s) needed", "input-type": "text", required: true, "helper-text": "e.g. journeyman electricians, PV installers" },
             { type: "TextInput", name: "headcount", label: "Headcount", "input-type": "number", required: true },
