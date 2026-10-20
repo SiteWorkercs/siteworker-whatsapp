@@ -29,9 +29,16 @@ export function createApp(opts: AppOptions = {}) {
   const now = opts.now ?? (() => new Date());
 
   const llm: LLM = opts.llm ?? new Anthropic({ apiKey: cfg.anthropicApiKey });
+  const missing = [
+    !cfg.anthropicApiKey && "ANTHROPIC_API_KEY",
+    !cfg.dryRun && !cfg.kapsoApiKey && "KAPSO_API_KEY",
+    !cfg.dryRun && !cfg.phoneNumberId && "WHATSAPP_PHONE_NUMBER_ID",
+  ].filter(Boolean) as string[];
+  if (missing.length) console.error(`Missing settings: ${missing.join(", ")}. Replies will be printed, not sent.`);
+
   const messenger: Messenger =
     opts.messenger ??
-    (cfg.dryRun
+    (cfg.dryRun || missing.length
       ? new ConsoleMessenger(!opts.quiet)
       : new KapsoMessenger({ baseUrl: cfg.kapsoBaseUrl, kapsoApiKey: cfg.kapsoApiKey }, cfg.phoneNumberId));
 
@@ -81,7 +88,7 @@ export function createApp(opts: AppOptions = {}) {
 
   const notifier = new Notifier(messenger, recorder, store, mock.services);
 
-  return { agent, notifier, escalationNotifier, sms, email, audit, bus, recorder, store, messenger, services: mock.services, mock, config: cfg };
+  return { missing, agent, notifier, escalationNotifier, sms, email, audit, bus, recorder, store, messenger, services: mock.services, mock, config: cfg };
 }
 
 export type App = ReturnType<typeof createApp>;

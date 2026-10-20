@@ -10,7 +10,13 @@ const { config } = app;
 const server = express();
 
 server.get("/health", (_req, res) => {
-  res.json({ ok: true, dryRun: config.dryRun, model: config.model });
+  res.json({
+    ok: app.missing.length === 0,
+    live: !config.dryRun && app.missing.length === 0,
+    missingSettings: app.missing,
+    alerts: config.alerts.dryRun || !config.alerts.twilioAccountSid ? "printed only" : "live",
+    model: config.model,
+  });
 });
 
 // Meta / Kapso webhook verification handshake
