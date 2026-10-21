@@ -42,6 +42,14 @@ describe("agent loop", () => {
   });
 });
 
+describe("practice mode", () => {
+  it("tells the model jobs are sample data", async () => {
+    const app = testApp([[{ text: "ok" }]]);
+    await app.agent.handleInbound(text(MARCUS, "any jobs?"));
+    expect(JSON.stringify(app.llm.calls[0].system)).toContain("sample data");
+  });
+});
+
 describe("model failures", () => {
   it("replies with a handoff and alerts the team when Claude is unreachable", async () => {
     const app = testApp();

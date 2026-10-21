@@ -83,6 +83,7 @@ export function createApp(opts: AppOptions = {}) {
     flows: cfg.flows,
     links,
     timezone: cfg.timezone,
+    practiceData: cfg.practiceData,
     now,
   });
 

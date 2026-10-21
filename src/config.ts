@@ -35,6 +35,9 @@ export const config = {
     onDutyEmail: (env.ESCALATION_EMAIL_TO ?? "").split(",").map((s) => s.trim()).filter(Boolean),
   },
 
+  // Mock services are the only ones wired up today, so practice mode defaults on.
+  practiceData: (env.PRACTICE_DATA ?? "true").toLowerCase() !== "false",
+
   port: Number(env.PORT || 3000),
   dryRun: (env.DRY_RUN ?? "true").toLowerCase() !== "false",
   auditLogPath: env.AUDIT_LOG_PATH || "./data/audit.jsonl",

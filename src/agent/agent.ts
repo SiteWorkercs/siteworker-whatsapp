@@ -35,6 +35,7 @@ export interface AgentDeps {
   flows: ToolContext["flows"];
   links: ToolContext["links"];
   timezone: string;
+  practiceData?: boolean;
   now?: () => Date;
 }
 
@@ -305,6 +306,7 @@ export class Agent {
           secureUploadUrl: this.d.links.secureUpload,
           doweUrl: this.d.links.dowe,
           guardrailNotes: notes,
+          practiceData: this.d.practiceData,
         }),
       },
     ];
