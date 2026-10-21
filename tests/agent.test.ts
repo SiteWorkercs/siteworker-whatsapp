@@ -92,6 +92,15 @@ describe("deterministic guardrails", () => {
     expect(es).toMatch(/ayuda médica/);
   });
 
+  it("applicants and unknown numbers get a 911 reminder and a normal (email) alert", async () => {
+    const app = testApp();
+    const reply = await app.agent.handleInbound(text("15559998888", "I hurt my back at my last job, can I still apply?"));
+    expect(reply).toBe("If this is an emergency, call 911. I've passed your message to the SiteWorker team.");
+    expect(app.mock.log.escalations[0]).toMatchObject({ reason: "injury", priority: "normal" });
+    expect((app.sms as any).sent).toHaveLength(0);
+    expect((app.email as any).sent).toHaveLength(1);
+  });
+
   it("blocks replies that mention company entities and falls back to a handoff", async () => {
     const app = testApp([[{ text: "That's SiteWorker Management Solutions, our payroll LLC!" }]]);
     await app.agent.handleInbound(text(MARCUS, "who pays me?"));

@@ -79,6 +79,10 @@ const FIXED = {
     en: "If anyone is hurt, get medical help now. Call 911 if it's serious. Tell your site supervisor right away. I've alerted your Workforce Specialist, and they'll contact you shortly.",
     es: "Si alguien está herido, busca ayuda médica ahora. Llama al 911 si es grave. Avísale de inmediato a tu supervisor del sitio. Ya le avisé a tu especialista de SiteWorker y te va a contactar pronto.",
   },
+  injuryApplicant: {
+    en: "If this is an emergency, call 911. I've passed your message to the SiteWorker team.",
+    es: "Si es una emergencia, llama al 911. Ya le pasé tu mensaje al equipo de SiteWorker.",
+  },
   availabilityThanks: {
     en: "Got your availability. Thanks.",
     es: "Recibimos tu disponibilidad. Gracias.",
@@ -232,20 +236,24 @@ export class Agent {
         await this.d.recorder.emit({ topic: "agent.guardrail", key: phone, actor: "system", payload: { event: "sensitive_redacted", kinds: found } });
       }
       if (mentionsInjury(text)) {
+        // Known workers and clients may be on a SiteWorker site: urgent text alert.
+        // Applicants and unknown numbers aren't on a site yet: 911 reminder and an email.
+        const onSite = contact?.kind === "worker" || contact?.kind === "client";
+        const priority = onSite ? "urgent" : "normal";
         const esc = await this.d.services.requests.createEscalation({
           phone,
           reason: "injury",
-          priority: "urgent",
-          summary: `Possible injury reported: "${text.slice(0, 200)}"`,
+          priority,
+          summary: `${onSite ? "Possible injury reported" : "Injury mentioned by an applicant or unknown number"}: "${text.slice(0, 200)}"`,
         });
         await this.d.recorder.emit({
           topic: "escalation.created",
           key: phone,
           actor: "system",
-          payload: { escalationId: esc.id, reason: "injury", priority: "urgent", auto: true },
+          payload: { escalationId: esc.id, reason: "injury", priority, auto: true },
         });
         // Fixed reply: no AI-written medical or safety advice for injuries.
-        const reply = FIXED.injury[lang];
+        const reply = (onSite ? FIXED.injury : FIXED.injuryApplicant)[lang];
         state.history.push({ role: "user", content: text }, { role: "assistant", content: reply });
         return await this.reply(phone, reply, actor, lang);
       }
