@@ -81,11 +81,15 @@ describe("deterministic guardrails", () => {
     expect(JSON.stringify(app.audit.entries())).not.toContain("6789");
   });
 
-  it("creates an urgent injury escalation before the model answers", async () => {
-    const app = testApp([[{ text: "Get medical help first. Call 911 if it's serious." }]]);
-    await app.agent.handleInbound(text(TANYA, "my helper fell and is bleeding"));
+  it("injuries get an urgent escalation and a fixed reply, with no AI-written advice", async () => {
+    const app = testApp();
+    const reply = await app.agent.handleInbound(text(TANYA, "my helper fell and is bleeding"));
     expect(app.mock.log.escalations[0]).toMatchObject({ reason: "injury", priority: "urgent" });
-    expect(JSON.stringify(app.llm.calls[0].system)).toContain("injury");
+    expect(app.llm.calls).toHaveLength(0);
+    expect(reply).toMatch(/911/);
+    expect(reply).not.toMatch(/press|pressure|cloth|bandage/i);
+    const es = await app.agent.handleInbound(text(LUIS, "me caí del andamio y estoy herido"));
+    expect(es).toMatch(/ayuda médica/);
   });
 
   it("blocks replies that mention company entities and falls back to a handoff", async () => {

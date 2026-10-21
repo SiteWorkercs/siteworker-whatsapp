@@ -75,6 +75,10 @@ const FIXED = {
     en: "Thanks for letting us know. Your Workforce Specialist has been alerted and will follow up.",
     es: "Gracias por avisar. Ya le avisamos a tu especialista de SiteWorker y te va a contactar.",
   },
+  injury: {
+    en: "If anyone is hurt, get medical help now. Call 911 if it's serious. Tell your site supervisor right away. I've alerted your Workforce Specialist, and they'll contact you shortly.",
+    es: "Si alguien está herido, busca ayuda médica ahora. Llama al 911 si es grave. Avísale de inmediato a tu supervisor del sitio. Ya le avisé a tu especialista de SiteWorker y te va a contactar pronto.",
+  },
   availabilityThanks: {
     en: "Got your availability. Thanks.",
     es: "Recibimos tu disponibilidad. Gracias.",
@@ -240,9 +244,10 @@ export class Agent {
           actor: "system",
           payload: { escalationId: esc.id, reason: "injury", priority: "urgent", auto: true },
         });
-        notes.push(
-          "This message may be about an injury. An urgent escalation was already created. Tell them to get medical help first (call 911 if it's serious) and that a Workforce Specialist is being alerted now. Don't give medical or site safety instructions. Don't escalate again.",
-        );
+        // Fixed reply: no AI-written medical or safety advice for injuries.
+        const reply = FIXED.injury[lang];
+        state.history.push({ role: "user", content: text }, { role: "assistant", content: reply });
+        return await this.reply(phone, reply, actor, lang);
       }
 
       // 6. Claude
